@@ -1,0 +1,20 @@
+FROM node:18.7-alpine3.15
+
+# Create app directory
+RUN mkdir -p /usr/src/next
+WORKDIR /usr/src/next
+
+# Copy all source files
+COPY ./next/ /usr/src/next
+COPY ./dev/certificates/ /usr/src/next/certificates
+
+RUN chown -R node:node /usr/src/next
+
+#Execute all following as node user
+USER node
+
+EXPOSE 3000
+
+# Install the dependencies in the container, mirror the host
+# volume, and skip installing again if a node_modules folder is present:
+CMD [ -d "node_modules" ]  && npm run dev || npm ci && npm run dev

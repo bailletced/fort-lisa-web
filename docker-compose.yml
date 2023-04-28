@@ -1,0 +1,73 @@
+version: "3.3"
+
+services:
+  backend:
+    container_name: fl-backend
+    build:
+      context: .
+      dockerfile: docker/backend/dockerfile
+    links:
+      - db
+      - redis_db:redis
+    depends_on:
+      - db
+      - redis_db
+    volumes:
+      - ./apollo:/usr/src/backend
+      - ./dev/certificates:/usr/src/backend/certificates
+    ports:
+      - 4000:4000
+    environment:
+      NODE_ENV: development
+      DEBUG: nodejs-docker-express:*
+
+  client:
+    container_name: fl-client
+    build:
+      context: .
+      dockerfile: docker/client/dockerfile
+    volumes:
+      - ./next:/usr/src/next
+      - ./dev/certificates:/usr/src/next/certificates
+    ports:
+      - 3000:3000
+    environment:
+      NODE_ENV: development
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  nginx:
+    container_name: fl-nginx
+    image: "nginx:1.23.1-alpine"
+    ports:
+      - "3080:80"
+      - "443:443"
+    volumes:
+      - "./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf"
+      - "./dev/certificates:/etc/ssl/"
+    links:
+      - backend
+      - client
+      - db
+
+  db:
+    container_name: fl-postgres
+    image: postgres:14.1-alpine
+    user: ${POSTGRES_UID}:${POSTGRES_GID}
+    environment:
+      - PGDATA=/var/lib/pg_data
+      - POSTGRES_USER=fl
+      - POSTGRES_PASSWORD=fl
+      - POSTGRES_DB=fl
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db:/var/lib/postgresql/data
+
+  redis_db:
+    image: redis:7.0.4-alpine
+    container_name: fl-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./cache/data:/data
