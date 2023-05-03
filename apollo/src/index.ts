@@ -4,14 +4,23 @@ import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHt
 import express from "express";
 import http from "http";
 import cors from "cors";
-import json from "body-parser";
+import bodyParser from "body-parser";
 import { getSchema } from "./schema";
+import router from "../config/routes";
+import { middlewares } from "./middlewares";
 
 interface MyContext {
   token?: String;
 }
 
+// integration with Express
 const app = express();
+
+// Middlewares initialization
+await (await middlewares()).map((middleware) => app.use(middleware));
+
+app.use("/api", router);
+
 const httpServer = http.createServer(app);
 let graphqlSchema = await getSchema();
 
@@ -24,7 +33,7 @@ await server.start();
 app.use(
   "/graphql",
   cors<cors.CorsRequest>(),
-  json(),
+  bodyParser.json(),
   expressMiddleware(server, {
     context: async ({ req }) => ({ token: req.headers.token }),
   })
@@ -33,4 +42,4 @@ app.use(
 await new Promise<void>((resolve) =>
   httpServer.listen({ port: 4000 }, resolve)
 );
-console.log(`🚀 Server ready at http://localhost:4000/graphql`);
+console.log(`🚀 Server ready at https://dev.fort-lisa.com/graphql`);

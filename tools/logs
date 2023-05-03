@@ -1,0 +1,18 @@
+#!/bin/sh
+#
+# Open container logs
+
+logs() {
+    if [ $# -eq 0 ] 
+    then
+        gnome-terminal --tab --title="logs client" -- bash -c "docker-compose logs -t -f client"
+        gnome-terminal --tab --title="logs backend" -- bash -c "docker-compose logs -t -f backend"
+    else
+        if [ "$1" = "client" ] || [ "$1" = "backend" ] || [ "$1" = "nginx" ];
+        then
+            gnome-terminal --tab --title="logs $1" -- bash -c "docker-compose logs -t -f $1"
+        fi
+    fi
+}
+
+logs $@

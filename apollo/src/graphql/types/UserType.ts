@@ -12,7 +12,7 @@ export class UserType {
   email: string;
 
   @Field((type) => Boolean)
-  idAdmin: boolean;
+  isAdmin: boolean;
 
   @Field((type) => String)
   createdAt: string;

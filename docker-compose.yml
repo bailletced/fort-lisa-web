@@ -14,12 +14,12 @@ services:
       - redis_db
     volumes:
       - ./apollo:/usr/src/backend
-      - ./dev/certificates:/usr/src/backend/certificates
     ports:
       - 4000:4000
     environment:
       NODE_ENV: development
       DEBUG: nodejs-docker-express:*
+      CHOKIDAR_USEPOLLING: "true"
 
   client:
     container_name: fl-client
@@ -28,7 +28,6 @@ services:
       dockerfile: docker/client/dockerfile
     volumes:
       - ./next:/usr/src/next
-      - ./dev/certificates:/usr/src/next/certificates
     ports:
       - 3000:3000
     environment:

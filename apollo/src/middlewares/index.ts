@@ -1,15 +1,9 @@
 import session from "express-session";
 import { redisClient } from "../internal/redisClient";
 import { whitelistOperationMiddleware } from "./whitelistOperationsMiddleware";
-
-const express = require("express");
-
+import RedisStore from "connect-redis";
 export const middlewares = async () => {
-  const RedisStore = require("connect-redis")(session);
-
   return [
-    express.json(),
-    express.urlencoded({ extended: false }),
     session({
       name: "tblfrt_session",
       store: new RedisStore({ client: redisClient }),

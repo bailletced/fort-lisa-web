@@ -30,7 +30,7 @@ export class UserQueries {
     userId: "1",
     email: "toto@toto.com",
     name: "cédric",
-    idAdmin: true,
+    isAdmin: true,
     createdAt: "now",
   };
 

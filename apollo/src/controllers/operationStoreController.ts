@@ -3,8 +3,8 @@ import prismaClient from "../internal/prismaClient";
 import { redisClient } from "../internal/redisClient";
 
 export const operations_store = async (req: Request, res: Response) => {
-  const operationsHeader = req.headers["tblfrt-operations"];
-  if (operationsHeader !== process.env.TBLFRT_OPERATIONS) {
+  const operationsHeader = req.headers["fl-gql-operations"];
+  if (operationsHeader !== process.env.FL_GQL_OPERATIONS) {
     return res.status(403).send({
       message: "You are not authorized to perform queries on this endpoint.",
     });

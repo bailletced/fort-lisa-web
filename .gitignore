@@ -1,4 +1,5 @@
 backend/node_modules/
+certificates
 cache
 db
 .env

@@ -49,5 +49,6 @@ export const whitelistOperationMiddleware = async (
     });
   }
 
+  // We are allowed to perform plain queries outside of production env
   next();
 };

@@ -1,0 +1,17 @@
+#!/bin/sh
+#
+# Start dev environment
+
+main() {
+    if [ "$1" = "start" ];
+    then
+        docker-compose up -d
+        tools/logs
+    elif [ "$1" = "stop" ];
+    then
+        docker-compose stop
+    fi
+}
+
+main $@
+
