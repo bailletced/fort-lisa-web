@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { WhitelistHashNotFoundException } from "../exceptions/WhitelistHashNotFoundException";
 import { isDefined, isNotDefined } from "../internal/object";
-import prismaClient from "../internal/prismaClient";
+import prisma from "../internal/prismaClient";
 import { redisClient } from "../internal/redisClient";
 
 export const whitelistOperationMiddleware = async (
@@ -11,16 +11,16 @@ export const whitelistOperationMiddleware = async (
 ) => {
   let queryHash;
   if (req.method === "POST") {
-    queryHash = req.body.operationId;
+    queryHash = req.body?.operationId;
   } else {
-    queryHash = req.query.operationId;
+    queryHash = req.query?.operationId;
   }
 
   if (isDefined(queryHash)) {
     let queryString = await redisClient.hget("operations", queryHash);
 
     if (isNotDefined(queryString)) {
-      const operationStore = await prismaClient.operationStore.findUnique({
+      const operationStore = await prisma.operationStore.findUnique({
         where: {
           operationId: queryHash,
         },

@@ -9,7 +9,7 @@ graphql_sync() {
 
     curl \
     -X POST \
-    -H 'Content-Type: application/json' -H "fl-gql-operations: $FL_GQL_OPERATIONS" \
+    -H 'Content-Type: application/json' -H "fl-gql-operations: $FL_GQL_OPERATION_SECRET" \
     -d "$operations" "${API_ENDPOINT}"/operations
     
     echo ''

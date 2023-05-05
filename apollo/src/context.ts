@@ -3,11 +3,11 @@ import { Request } from "express";
 
 export interface Context {
   req: Request;
-  user: User;
+  user?: User;
 }
 
 export const getContext = (req: Request): Context => {
-  const user = req?.session?.user as User;
+  const user = req.session?.user as User;
 
   return {
     req,

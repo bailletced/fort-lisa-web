@@ -1,7 +1,7 @@
-import prismaClient from "../src/internal/prismaClient";
+import prisma from "../src/internal/prismaClient";
 
 const seedUsers = async () => {
-  await prismaClient.user.createMany({
+  await prisma.user.createMany({
     data: [
       {
         email: "bailletced@gmail.com",
@@ -26,10 +26,10 @@ async function main() {
 
 main()
   .then(async () => {
-    await prismaClient.$disconnect();
+    await prisma.$disconnect();
   })
   .catch(async (e) => {
     console.error(e);
-    await prismaClient.$disconnect();
+    await prisma.$disconnect();
     process.exit(1);
   });

@@ -20,7 +20,8 @@ services:
       NODE_ENV: development
       DEBUG: nodejs-docker-express:*
       CHOKIDAR_USEPOLLING: "true"
-
+    stdin_open: true
+    tty: true
   client:
     container_name: fl-client
     build:

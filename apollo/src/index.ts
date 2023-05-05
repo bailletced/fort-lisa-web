@@ -8,13 +8,10 @@ import bodyParser from "body-parser";
 import { getSchema } from "./schema";
 import router from "../config/routes";
 import { middlewares } from "./middlewares";
-
-interface MyContext {
-  token?: String;
-}
+import { Context } from "./context";
 
 // integration with Express
-const app = express();
+export const app = express();
 
 // Middlewares initialization
 await (await middlewares()).map((middleware) => app.use(middleware));
@@ -24,7 +21,7 @@ app.use("/api", router);
 const httpServer = http.createServer(app);
 let graphqlSchema = await getSchema();
 
-const server = new ApolloServer<MyContext>({
+const server = new ApolloServer<Context>({
   schema: graphqlSchema,
   plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
 });
@@ -35,7 +32,7 @@ app.use(
   cors<cors.CorsRequest>(),
   bodyParser.json(),
   expressMiddleware(server, {
-    context: async ({ req }) => ({ token: req.headers.token }),
+    context: async ({ req }) => ({ req }),
   })
 );
 

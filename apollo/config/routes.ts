@@ -2,6 +2,7 @@ import bodyParser from "body-parser";
 import { operations_store } from "../src/controllers/operationStoreController";
 import cors from "cors";
 import express, { Router } from "express";
+import { auth_google } from "../src/controllers/auth/googleAuthController";
 
 const router = Router();
 
@@ -21,7 +22,7 @@ router.use(express.urlencoded({ extended: true }));
 router.use(bodyParser.json());
 
 // Authentication APIs
-// router.post("/auth/sign-in/password", auth_sign_in_password);
+router.post("/auth/google", auth_google);
 // router.post("/auth/sign-up/password", auth_sign_up_password);
 
 // Store graphql operations

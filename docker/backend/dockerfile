@@ -16,8 +16,6 @@ USER node
 COPY docker-entrypoint.sh /usr/src/backend
 ENTRYPOINT ["docker-entrypoint.sh"]
 
-EXPOSE 80
-
 # Install the dependencies in the container, mirror the host
 # volume, and skip installing again if a node_modules folder is present:
 CMD [ -d "node_modules" ]  && npm run dev || npm ci && npm run dev

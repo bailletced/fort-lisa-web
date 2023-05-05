@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,20 +8,52 @@ datasource db {
 }
 
 model User {
-  userId  String @id @default(uuid())
+  userId  String @id @default(uuid()) @map("user_id")
   email   String @unique
   name    String?
-  isActive Boolean @default(false)
-  lastConnection DateTime?
-  createdAt DateTime @default(now())
-  updatedAt DateTime? @updatedAt
+  isActive Boolean @default(false) @map("is_active")
+  lastConnectionDate DateTime? @map("last_connection_date")
+  accounts      Account[]
+  sessions      Session[]
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+
   @@index([userId])
+  @@map("users")
+}
+
+model Account {
+  accountId          String  @id @default(cuid()) @map("account_id")
+  userId             String  @map("user_id")
+  provider           EAccountProvider
+  providerAccountId  String  @map("provider_account_id")
+  refresh_token      String? @db.Text
+  access_token       String? @db.Text
+
+  user User @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+enum EAccountProvider {
+  FACEBOOK
+  GOOGLE
+}
+
+model Session {
+  sessionId    String   @id @default(cuid()) @map("sid")
+  sess         Json   @unique
+  userId       String   @map("user_id")
+  expire       Int
+  user         User     @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  
+  @@map("sessions")
 }
 
 model OperationStore {
-  operationId String @id
+  operationId String @id @map("operation_id")
   query String
-  updatedAt DateTime? @updatedAt
+  updatedAt DateTime? @updatedAt @map("updated_at")
 
   @@index([operationId])
 }
