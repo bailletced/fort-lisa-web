@@ -1,0 +1,18 @@
+#!/bin/bash
+set -e
+
+graphql_sync() {
+    source apollo/.env
+    ./tools/console-client npm run graphql:generate #We get the list of operations stored in a json file
+
+    operations=`cat ./next/graphql/server.json`
+
+    curl \
+    -X POST \
+    -H 'Content-Type: application/json' -H "fl-gql-operations: $FL_GQL_OPERATION_SECRET" \
+    -d "$operations" "${API_ENDPOINT}"/operations
+    
+    echo ''
+}
+
+graphql_sync

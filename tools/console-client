@@ -1,0 +1,5 @@
+#!/bin/sh
+#
+# Runs command in the dev docker container.
+
+docker exec -u node fl-client "$@"

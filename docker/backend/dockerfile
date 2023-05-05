@@ -1,22 +1,20 @@
 FROM node:18.7-alpine3.15
 
 # Create app directory
-RUN mkdir -p /usr/src/apollo
-WORKDIR /usr/src/apollo
+RUN mkdir -p /usr/src/backend
+WORKDIR /usr/src/backend
 
 # Copy all source files
-COPY ./apollo/ /usr/src/apollo
+COPY ./apollo/ /usr/src/backend
 
-RUN chown -R node:node /usr/src/apollo
+RUN chown -R node:node /usr/src/backend
 
 #Execute all following as node user
 USER node
 
 # Docker entrypoint
-COPY docker-entrypoint.sh /usr/src/apollo
+COPY docker-entrypoint.sh /usr/src/backend
 ENTRYPOINT ["docker-entrypoint.sh"]
-
-EXPOSE 80
 
 # Install the dependencies in the container, mirror the host
 # volume, and skip installing again if a node_modules folder is present:

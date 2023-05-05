@@ -1,18 +1,20 @@
 import session from "express-session";
-import { redisClient } from "../internal/redisClient";
 import { whitelistOperationMiddleware } from "./whitelistOperationsMiddleware";
+import passport from "passport";
+import genFunc from "connect-pg-simple";
 
-const express = require("express");
+const PostgresqlStore = genFunc(session);
+const sessionStore = new PostgresqlStore({
+  conString: process.env.DATABASE_URL,
+  tableName: 'sessions',
+  col
+});
 
 export const middlewares = async () => {
-  const RedisStore = require("connect-redis")(session);
-
   return [
-    express.json(),
-    express.urlencoded({ extended: false }),
     session({
-      name: "tblfrt_session",
-      store: new RedisStore({ client: redisClient }),
+      name: "fl-session",
+      store: sessionStore,
       secret: process.env.EXPRESS_SECRET_COOKIE as string,
       saveUninitialized: false,
       cookie: {
@@ -24,6 +26,7 @@ export const middlewares = async () => {
       resave: false,
       rolling: false,
     }),
+    passport.authenticate("session"),
     whitelistOperationMiddleware,
   ];
 };
