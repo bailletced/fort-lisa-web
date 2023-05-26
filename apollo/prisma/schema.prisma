@@ -20,6 +20,7 @@ model User {
 
   accounts      Account[]
   userSessionSubscriptions      UserSessionSubscription[]
+  permissionSetUserSubscriptions PermissionSetUserSubscription[]
 
   @@index([userId])
   @@map("users")
@@ -41,6 +42,7 @@ model Account {
 enum EAccountProvider {
   FACEBOOK
   GOOGLE
+  PASSWORD
 }
 
 model Session {
@@ -56,13 +58,89 @@ model UserSessionSubscription {
   userId       String   @map("user_id")
   sessId    String?   @map("sess_id")
 
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+
   user         User     @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  @@index([userSessionSubscriptionId])
+  @@map("user_session_subscriptions")
+}
+
+model Feature {
+  featureId String @id @default(uuid()) @map("feature_id")
+  name String
+  description String?
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+
+  roles  Role[]
+  @@index([featureId])
+  @@map("features")
+}
+model Role {
+  roleId String @id @default(uuid()) @map("role_id")
+  featureId String @map("feature_id")
+  name String
+  description String?
+  order Int
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+
+  permissionSetRoleSubscriptions PermissionSetRoleSubscription[]
+  feature Feature @relation(fields: [featureId], references: [featureId], onDelete: Cascade)
+  @@index([roleId])
+  @@map("roles")
+}
+
+model PermissionSet {
+  permissionSetId String @id @default(uuid()) @map("permission_set_id")
+  name String
+  description String?
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+
+  permissionSetRoleSubscriptions PermissionSetRoleSubscription[]
+  permissionSetUserSubscriptions PermissionSetUserSubscription[]
+  @@index([permissionSetId])
+  @@map("permission_sets")
+}
+
+model PermissionSetRoleSubscription {
+  permissionSetRoleSubscriptionId String @id @default(uuid()) @map("permission_set_role_subscription_id")
+  permissionSetId String @map("permission_set_id")
+  roleId String @map("role_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+
+  permissionSet PermissionSet @relation(fields: [permissionSetId], references: [permissionSetId], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [roleId], onDelete: Cascade)
+  @@index([permissionSetRoleSubscriptionId])
+  @@map("permission_set_role_subscriptions")
+}
+
+model PermissionSetUserSubscription {
+  permissionSetUserSubscriptionId String @id @default(uuid()) @map("permission_set_user_subscription_id")
+  permissionSetId String @map("permission_set_id")
+  userId String @map("user_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+
+  permissionSet PermissionSet @relation(fields: [permissionSetId], references: [permissionSetId], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  @@index([permissionSetUserSubscriptionId])
+  @@map("permission_set_user_subscriptions")
 }
 
 model OperationStore {
-  operationId String @id @map("operation_id")
+  operationId String @id @default(uuid()) @map("operation_id")
   query String
   updatedAt DateTime? @updatedAt @map("updated_at")
 
   @@index([operationId])
+  @@map("operation_stores")
 }

@@ -8,7 +8,7 @@ WORKDIR /usr/src/next
 COPY ./next/ /usr/src/next
 COPY ./dev/certificates/ /usr/src/next/certificates
 
-RUN chown -R node:node /usr/src/next
+RUN chown -rR node:node /usr/src/next
 
 #Execute all following as node user
 USER node
