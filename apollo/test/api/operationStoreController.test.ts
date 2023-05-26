@@ -1,9 +1,7 @@
-import { faker } from "@faker-js/faker";
 import prismaClient from "../../src/internal/prismaClient";
 import { redisClient } from "../../src/internal/redisClient";
 import request from "supertest";
-import express from "express";
-import router from "../../config/routes";
+import { createTestApp } from "../helpers/setupApp";
 
 const operations = {
   "3fb2288d5ec4201c04dfaeadad3dbc7ed1cce3f2039812af365daae22ec47d48":
@@ -13,14 +11,12 @@ const operations = {
 };
 
 describe("OperationStore controller", () => {
-  const app = express();
-  app.use(express.json());
-  app.use(router);
-
   it("should fail if secret header is not provided", async () => {
+    const app = await createTestApp();
+
     const initialCount = await prismaClient.operationStore.count();
     const response = await request(app)
-      .post("/operations")
+      .post("/api/operations")
       .send(operations)
       .set("Accept", "application/json");
 
@@ -29,11 +25,13 @@ describe("OperationStore controller", () => {
   });
 
   it("should import operations to redis and database", async () => {
+    const app = await createTestApp();
+
     const originOperations = await redisClient.hgetall("operations");
     expect(originOperations).toEqual({});
 
     const response = await request(app)
-      .post("/operations")
+      .post("/api/operations")
       .set({
         [process.env.FL_GQL_OPERATION_HEADER]:
           process.env.FL_GQL_OPERATION_SECRET,

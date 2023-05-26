@@ -5,10 +5,12 @@ import express from "express";
 import http from "http";
 import cors from "cors";
 import bodyParser from "body-parser";
-import { getSchema } from "./schema";
+import { emitSchemaDefinitionWithDirectivesFile, getSchema } from "./schema";
 import router from "../config/routes";
 import { middlewares } from "./middlewares";
-import { Context } from "./context";
+import { Context, getContext } from "./context";
+import { permissionDirectiveTransformer } from "./graphql/directives/permissionDirective";
+import { DIRECTIVES } from "./graphql/directives";
 
 // integration with Express
 export const app = express();
@@ -20,6 +22,13 @@ app.use("/api", router);
 
 const httpServer = http.createServer(app);
 let graphqlSchema = await getSchema();
+await emitSchemaDefinitionWithDirectivesFile("./schema.gql", graphqlSchema);
+
+// Apply directives to schema
+graphqlSchema = permissionDirectiveTransformer(
+  graphqlSchema,
+  DIRECTIVES.HAS_PERM
+);
 
 const server = new ApolloServer<Context>({
   schema: graphqlSchema,
@@ -32,7 +41,7 @@ app.use(
   cors<cors.CorsRequest>(),
   bodyParser.json(),
   expressMiddleware(server, {
-    context: async ({ req }) => ({ req }),
+    context: async ({ req }) => getContext(req),
   })
 );
 

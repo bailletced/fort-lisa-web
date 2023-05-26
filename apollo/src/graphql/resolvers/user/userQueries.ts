@@ -4,13 +4,8 @@ import { Context } from "../../../context";
 
 @Resolver()
 export class UserQueries {
-  @Query(() => UserType)
+  @Query(() => UserType, { nullable: true })
   me(@Ctx() ctx: Context) {
-    return ctx?.user;
-  }
-
-  @Query(() => String)
-  test() {
-    return "test";
+    return ctx.user;
   }
 }

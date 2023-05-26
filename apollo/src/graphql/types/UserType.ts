@@ -1,4 +1,6 @@
-import { Field, ID, ObjectType } from "type-graphql";
+import { Directive, Field, ID, ObjectType } from "type-graphql";
+import { permissionEnum } from "../enums/permissionEnum";
+import { DIRECTIVES } from "../directives";
 
 @ObjectType()
 export class UserType {

@@ -11,12 +11,15 @@ model User {
   userId  String @id @default(uuid()) @map("user_id")
   email   String @unique
   name    String?
+  hashedPassword    String? @map("hashed_password")
+  salt    String?
   isActive Boolean @default(false) @map("is_active")
   lastConnectionDate DateTime? @map("last_connection_date")
-  accounts      Account[]
-  sessions      Session[]
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime? @updatedAt @map("updated_at")
+
+  accounts      Account[]
+  userSessionSubscriptions      UserSessionSubscription[]
 
   @@index([userId])
   @@map("users")
@@ -43,11 +46,17 @@ enum EAccountProvider {
 model Session {
   sessionId    String   @id @default(cuid()) @map("sid")
   sess         Json   @unique
-  userId       String   @map("user_id")
-  expire       Int
-  user         User     @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  expire       DateTime @db.Timestamptz(6)
   
   @@map("sessions")
+}
+
+model UserSessionSubscription {
+  userSessionSubscriptionId String   @id @default(cuid()) @map("user_session_subscription_id")
+  userId       String   @map("user_id")
+  sessId    String?   @map("sess_id")
+
+  user         User     @relation(fields: [userId], references: [userId], onDelete: Cascade)
 }
 
 model OperationStore {
