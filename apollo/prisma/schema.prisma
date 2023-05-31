@@ -15,12 +15,14 @@ model User {
   salt    String?
   isActive Boolean @default(false) @map("is_active")
   lastConnectionDate DateTime? @map("last_connection_date")
+  permissionSetId String? @map("permission_set_id") @unique
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime? @updatedAt @map("updated_at")
 
   accounts      Account[]
   userSessionSubscriptions      UserSessionSubscription[]
-  permissionSetUserSubscriptions PermissionSetUserSubscription[]
+
+  permissionSet PermissionSet? @relation(fields: [permissionSetId], references: [permissionSetId])
 
   @@index([userId])
   @@map("users")
@@ -65,31 +67,16 @@ model UserSessionSubscription {
   @@index([userSessionSubscriptionId])
   @@map("user_session_subscriptions")
 }
-
-model Feature {
-  featureId String @id @default(uuid()) @map("feature_id")
-  name String
-  description String?
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime? @updatedAt @map("updated_at")
-
-  roles  Role[]
-  @@index([featureId])
-  @@map("features")
-}
 model Role {
   roleId String @id @default(uuid()) @map("role_id")
-  featureId String @map("feature_id")
   name String
   description String?
-  order Int
+  feature String @default("")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime? @updatedAt @map("updated_at")
 
   permissionSetRoleSubscriptions PermissionSetRoleSubscription[]
-  feature Feature @relation(fields: [featureId], references: [featureId], onDelete: Cascade)
   @@index([roleId])
   @@map("roles")
 }
@@ -103,7 +90,8 @@ model PermissionSet {
   updatedAt DateTime? @updatedAt @map("updated_at")
 
   permissionSetRoleSubscriptions PermissionSetRoleSubscription[]
-  permissionSetUserSubscriptions PermissionSetUserSubscription[]
+  user User?
+
   @@index([permissionSetId])
   @@map("permission_sets")
 }
@@ -120,20 +108,6 @@ model PermissionSetRoleSubscription {
   role Role @relation(fields: [roleId], references: [roleId], onDelete: Cascade)
   @@index([permissionSetRoleSubscriptionId])
   @@map("permission_set_role_subscriptions")
-}
-
-model PermissionSetUserSubscription {
-  permissionSetUserSubscriptionId String @id @default(uuid()) @map("permission_set_user_subscription_id")
-  permissionSetId String @map("permission_set_id")
-  userId String @map("user_id")
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime? @updatedAt @map("updated_at")
-
-  permissionSet PermissionSet @relation(fields: [permissionSetId], references: [permissionSetId], onDelete: Cascade)
-  user User @relation(fields: [userId], references: [userId], onDelete: Cascade)
-  @@index([permissionSetUserSubscriptionId])
-  @@map("permission_set_user_subscriptions")
 }
 
 model OperationStore {

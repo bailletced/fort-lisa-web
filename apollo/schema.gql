@@ -4,22 +4,30 @@ schema {
 }
 
 directive @hasPerm(
+  """What the directive should return in case of missing permission"""
+  onFailure: String = "throw"
   """An array of required permissions"""
   perm: String = null
 ) on FIELD | MUTATION | QUERY
 
 type Mutation {
-  upsertUser: UserType @hasPerm(perm: "create_update_user")
+  upsertUser: UserType @hasPerm(perm: "write_users", onFailure: "throw")
 }
 
 type Query {
   me: UserType
 }
 
+"""All available roles"""
+enum Roles {
+  READ_USERS
+  WRITE_USERS
+}
+
 type UserType {
   createdAt: String!
   email: String!
-  isAdmin: Boolean!
   name: String!
+  roles: [Roles!]
   userId: ID!
 }

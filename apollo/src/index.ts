@@ -33,15 +33,20 @@ graphqlSchema = permissionDirectiveTransformer(
 const server = new ApolloServer<Context>({
   schema: graphqlSchema,
   plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
+  status400ForVariableCoercionErrors: true,
 });
 
 await server.start();
 app.use(
   "/graphql",
-  cors<cors.CorsRequest>(),
+  cors<cors.CorsRequest>({
+    origin: ["https://studio.apollographql.com", "https://dev.fort-lisa.com"],
+    credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"],
+  }),
   bodyParser.json(),
   expressMiddleware(server, {
-    context: async ({ req }) => getContext(req),
+    context: async ({ req, res }) => getContext(req),
   })
 );
 

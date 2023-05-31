@@ -9,6 +9,7 @@ import {
 import {
   auth_password_login,
   auth_password_register,
+  auth_test,
 } from "../src/controllers/auth/passwordAuthController";
 
 const router = Router();
@@ -34,6 +35,7 @@ router.get("/auth/google/callback", auth_google_callback);
 
 router.post("/auth/password/login", auth_password_login);
 router.post("/auth/password/register", auth_password_register);
+router.get("/toto", auth_test);
 // router.post("/auth/sign-up/password", auth_sign_up_password);
 
 // Store graphql operations

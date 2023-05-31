@@ -1,8 +1,8 @@
-import { User } from "@prisma/client";
+import { ContextUser } from "../../src/context";
 
 declare module "express-session" {
   interface SessionData {
-    user: User;
+    user: ContextUser;
   }
 }
 

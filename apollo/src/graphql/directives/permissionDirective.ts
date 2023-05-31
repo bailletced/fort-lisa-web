@@ -7,6 +7,8 @@ import {
 } from "graphql";
 import { DIRECTIVES } from ".";
 import { Context } from "../../context";
+import { UnauthenticatedException } from "../../exceptions/UnauthenticatedException";
+import { RoleMissingException } from "../../exceptions/RoleMissingException";
 export function permissionDirectiveTransformer(schema, directiveName) {
   return mapSchema(schema, {
     // Executes once for each object field in the schema
@@ -21,10 +23,10 @@ export function permissionDirectiveTransformer(schema, directiveName) {
       if (permissionDirective) {
         // Get this field's original resolver
         const { resolve = defaultFieldResolver } = fieldConfig;
-        const { perm } = permissionDirective;
+        const { perm, onFailure } = permissionDirective;
 
-        // Replace the original resolver with a function that *first* calls
-        // the original resolver, then converts its result to upper case
+        // Replace the original resolver with a function that *first* checks for required roles
+        // then return the result
         fieldConfig.resolve = async function (
           source,
           args,
@@ -32,14 +34,17 @@ export function permissionDirectiveTransformer(schema, directiveName) {
           info
         ) {
           if (!context.user) {
-            throw new Error(`NOT AUTH ${perm}`);
+            throw new UnauthenticatedException();
           }
 
-          const result = await resolve(source, args, context, info);
-          if (typeof result === "string") {
-            return result.toUpperCase();
+          if (!context.user.roles?.includes(perm)) {
+            if (onFailure === "throw") {
+              throw new RoleMissingException();
+            }
+            return null;
           }
-          return result;
+
+          return await resolve(source, args, context, info);
         };
         return fieldConfig;
       }
@@ -53,6 +58,12 @@ export const permissionDirective = new GraphQLDirective({
     perm: {
       description: "An array of required permissions",
       defaultValue: null,
+      type: GraphQLString,
+    },
+    onFailure: {
+      description:
+        "What the directive should return in case of missing permission",
+      defaultValue: "throw",
       type: GraphQLString,
     },
   },

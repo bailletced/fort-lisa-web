@@ -1,5 +1,6 @@
+import { ContextUser } from "../src/context";
+
 export const thisIsAModule = true;
-import { User as UserPrisma } from "@prisma/client";
 
 declare global {
   namespace NodeJS {
@@ -18,6 +19,6 @@ declare global {
   }
 
   namespace Express {
-    interface User extends UserPrisma {}
+    interface User extends ContextUser {}
   }
 }

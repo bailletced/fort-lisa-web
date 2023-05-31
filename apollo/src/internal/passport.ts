@@ -31,7 +31,7 @@ passport.use(
           },
         });
         if (newUser) {
-          done(null, newUser);
+          done(null, { ...newUser, roles: [] });
         }
       } else {
         done(null, user);
@@ -74,6 +74,7 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser(async (id, done) => {
   const user = await prismaClient.user.findFirst({ where: { userId: id } });
+
   done(null, user);
 });
 

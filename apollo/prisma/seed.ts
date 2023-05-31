@@ -1,6 +1,9 @@
+import { faker } from "@faker-js/faker";
+import prismaClient from "../src/internal/prismaClient";
 import prisma from "../src/internal/prismaClient";
 import crypto from "crypto";
 const BAILLETCED_ID = crypto.randomUUID();
+const BAILLETCED_SALT = crypto.randomBytes(16).toString(`hex`);
 
 const seedUsers = async () => {
   await prisma.user.createMany({
@@ -10,12 +13,26 @@ const seedUsers = async () => {
         email: "bailletced@gmail.com",
         name: "Cédric",
         isActive: true,
+        salt: BAILLETCED_SALT,
+        hashedPassword: crypto
+          .pbkdf2Sync("bailletced", BAILLETCED_SALT, 1000, 64, `sha512`)
+          .toString(`hex`),
       },
       ...[...Array(10).keys()].map((idx) => {
         return {
-          email: `email${idx}@email${idx}.${idx}`,
-          name: `FakeUser${idx}`,
+          email: faker.internet.email(),
+          name: faker.internet.userName(),
           isActive: true,
+          salt: crypto.randomBytes(16).toString(`hex`),
+          hashedPassword: crypto
+            .pbkdf2Sync(
+              faker.internet.password(),
+              crypto.randomBytes(16).toString(`hex`),
+              1000,
+              64,
+              `sha512`
+            )
+            .toString(`hex`),
         };
       }),
     ],
@@ -23,30 +40,20 @@ const seedUsers = async () => {
 };
 
 const initializePermissionSet = async () => {
-  const userFeature = await prisma.feature.create({
-    data: {
-      featureId: crypto.randomUUID(),
-      name: "users",
-      description: "users related feature",
-    },
-  });
-
   const roleIds = [crypto.randomUUID(), crypto.randomUUID()];
-  const roles = await prisma.role.createMany({
+  await prisma.role.createMany({
     data: [
       {
         roleId: roleIds[0],
-        featureId: userFeature.featureId,
         name: "read_users",
         description: "enable to see the list of users",
-        order: 1,
+        feature: "user_list",
       },
       {
         roleId: roleIds[1],
-        featureId: userFeature.featureId,
         name: "write_users",
         description: "enable to write users",
-        order: 2,
+        feature: "user_list",
       },
     ],
   });
@@ -68,10 +75,11 @@ const initializePermissionSet = async () => {
     }),
   });
 
-  await prisma.permissionSetUserSubscription.create({
-    data: {
-      permissionSetUserSubscriptionId: crypto.randomUUID(),
+  await prismaClient.user.update({
+    where: {
       userId: BAILLETCED_ID,
+    },
+    data: {
       permissionSetId: adminPermSet.permissionSetId,
     },
   });

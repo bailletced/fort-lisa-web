@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import prismaClient from "../../internal/prismaClient";
 import passport from "passport";
 import { User } from "@prisma/client";
+import { getContextUser } from "../../context";
 
 export const auth_password_register = async (req: Request, res: Response) => {
   const salt = crypto.randomBytes(16).toString(`hex`);
@@ -30,7 +31,11 @@ export const auth_password_register = async (req: Request, res: Response) => {
   }
 };
 
-export const auth_password_login = async (req, res, next) => {
+export const auth_password_login = async (
+  req: Request,
+  res: Response,
+  next
+) => {
   passport.authenticate("local", async (err, user: User) => {
     if (err) {
       return res.status(500).send({ message: "server.error" });
@@ -61,9 +66,17 @@ export const auth_password_login = async (req, res, next) => {
         },
       });
 
-      return res.send({
+      req.session.user = await getContextUser(user);
+
+      res.send({
         success: true,
       });
     });
   })(req, res, next);
+};
+
+export const auth_test = async (req: Request, res: Response) => {
+  // req.session.user = {};
+  const user = req.session.user;
+  res.send({ status: "okofzekfokze", user: user ?? "NULL" });
 };

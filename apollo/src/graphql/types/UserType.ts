@@ -1,5 +1,5 @@
 import { Directive, Field, ID, ObjectType } from "type-graphql";
-import { permissionEnum } from "../enums/permissionEnum";
+import { ROLE } from "../enums/roleEnum";
 import { DIRECTIVES } from "../directives";
 
 @ObjectType()
@@ -13,8 +13,8 @@ export class UserType {
   @Field((type) => String)
   email: string;
 
-  @Field((type) => Boolean)
-  isAdmin: boolean;
+  @Field((type) => [ROLE!], { nullable: true })
+  roles: ROLE[];
 
   @Field((type) => String)
   createdAt: string;

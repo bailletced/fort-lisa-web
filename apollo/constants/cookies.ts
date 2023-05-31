@@ -1,3 +1,3 @@
-export enum ECookies {
+export enum COOKIES {
   SESSION = "fl-session",
 }

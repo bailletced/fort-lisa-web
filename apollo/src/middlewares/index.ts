@@ -2,7 +2,7 @@ import session from "express-session";
 import { whitelistOperationMiddleware } from "./whitelistOperationsMiddleware";
 import genFunc from "connect-pg-simple";
 import pg from "pg";
-import { ECookies } from "../../constants/cookies";
+import { COOKIES } from "../../constants/cookies";
 import passport from "../internal/passport";
 
 const pgSession = genFunc(session);
@@ -12,22 +12,22 @@ const pgPool = new pg.Pool({
 export const middlewares = async () => {
   return [
     session({
-      name: ECookies.SESSION,
+      name: COOKIES.SESSION,
       store: new pgSession({
         pool: pgPool,
         tableName: "sessions",
         conString: process.env.DATABASE_URL,
         pruneSessionInterval: 2592000, //30 days in seconds,
       }),
-      secret: process.env.EXPRESS_SECRET_COOKIE as string,
+      secret: process.env.EXPRESS_SECRET_COOKIE,
       saveUninitialized: false,
       cookie: {
         httpOnly: true,
         maxAge: 1000 * 60 * 60 * 24 * 30,
-        sameSite: false,
-        secure: process.env.ENV === "production",
+        sameSite: "none",
+        secure: false,
       },
-      resave: false,
+      resave: true,
       rolling: false,
     }),
     passport.initialize(),
