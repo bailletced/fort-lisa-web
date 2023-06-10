@@ -17,6 +17,7 @@
   "type": "module",
   "dependencies": {
     "@apollo/server": "^4.7.0",
+    "@devoxa/prisma-relay-cursor-connection": "^2.2.2",
     "@prisma/client": "^4.14.0",
     "@types/connect-pg-simple": "^7.0.0",
     "@types/express-session": "^1.17.7",

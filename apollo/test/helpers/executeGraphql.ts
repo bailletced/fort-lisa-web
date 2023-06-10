@@ -1,15 +1,23 @@
 import { User } from "@prisma/client";
 import { ApolloServer } from "@apollo/server";
 import { getSchema } from "../../src/schema";
-import { Context } from "../../src/context";
+import { Context, ContextUser, getContextUser } from "../../src/context";
+import { permissionDirectiveTransformer } from "../../src/graphql/directives/permissionDirective";
+import { DIRECTIVES } from "../../src/graphql/directives";
 
 export const executeGqlSchema = async (
   query: string,
-  user: User | null,
+  user?: ContextUser,
   variables?: any
 ) => {
+  // Apply directives to schema
+  const schema = permissionDirectiveTransformer(
+    await getSchema(),
+    DIRECTIVES.HAS_PERM
+  );
+
   const apolloServer = new ApolloServer<Context>({
-    schema: await getSchema(),
+    schema,
   });
 
   return (await apolloServer).executeOperation(
@@ -17,7 +25,7 @@ export const executeGqlSchema = async (
     {
       contextValue: {
         req: null,
-        user,
+        user: user,
       },
     }
   );

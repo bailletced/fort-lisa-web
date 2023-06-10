@@ -10,18 +10,81 @@ directive @hasPerm(
   perm: String = null
 ) on FIELD | MUTATION | QUERY
 
+type ItemEdge {
+  """
+  
+        Represents this location in the query use it in `before` and `after` args
+        to query before and after this location.
+  """
+  cursor: String!
+  """The data of the record that goes along with this edge."""
+  node: UserType!
+}
+
 type Mutation {
   upsertUser: UserType @hasPerm(perm: "write_users", onFailure: "throw")
 }
 
+"""
+
+  PageInfo is information about the paging/cursoring happening on the server. 
+  You can use this information to request either the next or previous pages.
+  Use it in conjunction with the `ForwardPaginationArgs` and `BackwardPaginationArgs`.
+
+"""
+type PageInfo {
+  """
+  
+      The cursor representing the last record from the returned query. 
+      Can be used to query before or after this record.
+  """
+  endCursor: String
+  """Whether the query has more records after the end cursor."""
+  hasNextPage: Boolean!
+  """Whether the query has more records before the start cursor."""
+  hasPreviousPage: Boolean!
+  """
+  
+      The cursor representing the first record from the returned query. 
+      Can be used to query before or after this record.
+  """
+  startCursor: String
+}
+
 type Query {
   me: UserType
+  users(
+    """Grabs records starting from after the given cursor."""
+    after: String
+    """Grabs the first n records."""
+    first: Float
+  ): UserConnection @hasPerm(perm: "read_users", onFailure: "throw")
 }
 
 """All available roles"""
 enum Roles {
   READ_USERS
   WRITE_USERS
+}
+
+type UserConnection {
+  """
+  A list of objects with a record data (node) and its corresponding cursor from the query.
+  """
+  edges: [ItemEdge!]!
+  nodes: [UserType!]!
+  """
+  
+        PageInfo is information about the paging/cursoring happening on the server.
+        You can use this information to request either the next or previous pages.
+        Use it in conjunction with the `ForwardPaginationArgs` and `BackwardPaginationArgs`.
+        
+  """
+  pageInfo: PageInfo!
+  """
+  The estimated total count of records that may be returned across multiple queries.
+  """
+  totalCount: Float!
 }
 
 type UserType {

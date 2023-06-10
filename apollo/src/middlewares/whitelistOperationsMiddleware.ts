@@ -31,7 +31,7 @@ export const whitelistOperationMiddleware = async (
 
       if (isNotDefined(operationStore)) {
         const error = new WhitelistHashNotFoundException(queryHash);
-        return res.status(error.status).json(error.response);
+        return res.status(400).json(error.message);
       } else {
         queryString = operationStore?.query as string;
         await redisClient.hset("operations", queryHash, queryString);

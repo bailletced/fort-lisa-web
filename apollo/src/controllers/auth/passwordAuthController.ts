@@ -74,9 +74,3 @@ export const auth_password_login = async (
     });
   })(req, res, next);
 };
-
-export const auth_test = async (req: Request, res: Response) => {
-  // req.session.user = {};
-  const user = req.session.user;
-  res.send({ status: "okofzekfokze", user: user ?? "NULL" });
-};

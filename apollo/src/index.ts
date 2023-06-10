@@ -11,6 +11,8 @@ import { middlewares } from "./middlewares";
 import { Context, getContext } from "./context";
 import { permissionDirectiveTransformer } from "./graphql/directives/permissionDirective";
 import { DIRECTIVES } from "./graphql/directives";
+import { error } from "console";
+import { formatError } from "graphql";
 
 // integration with Express
 export const app = express();

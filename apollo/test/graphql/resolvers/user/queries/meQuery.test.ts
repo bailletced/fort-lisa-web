@@ -1,8 +1,7 @@
 import { faker } from "@faker-js/faker";
 import { gql } from "graphql-request";
-import { executeGqlSchema } from "../../../helpers/executeGraphql";
-import { GraphQLResponse } from "@apollo/server";
-import prismaClient from "../../../../src/internal/prismaClient";
+import prismaClient from "../../../../../src/internal/prismaClient";
+import { executeGqlSchema } from "../../../../helpers/executeGraphql";
 
 describe("Me query", () => {
   const query = gql`
@@ -39,6 +38,6 @@ describe("Me query", () => {
 
   it("should return null if non-logged user try to get informations", async () => {
     const response = await executeGqlSchema(query, null);
-    expect(response.body["singleResult"].data).toBeNull();
+    expect(response.body["singleResult"].data.me).toBeNull();
   });
 });

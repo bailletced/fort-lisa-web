@@ -1,13 +1,12 @@
-import { TExceptionResponse } from "./types";
+import { GraphQLError } from "graphql";
 
-export class WhitelistHashNotFoundException extends Error {
-  status: number;
-  response: TExceptionResponse;
-  constructor(queryHash: string) {
-    const message = `No hash asociated to ${queryHash}`;
-    super(message);
-    this.status = 404;
+export class WhitelistHashNotFoundException extends GraphQLError {
+  constructor(hash: string) {
+    super(`The hash ${hash} has not been found`, {
+      extensions: {
+        code: "QueryNotFoundException",
+      },
+    });
     this.name = "WhitelistHashNotFoundException";
-    this.response = { message, name: this.name };
   }
 }
