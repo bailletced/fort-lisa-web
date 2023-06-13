@@ -1,13 +1,12 @@
 import { Request, Response } from "express";
 import { redisClient } from "../internal/redisClient";
 import prismaClient from "../internal/prismaClient";
-import { faker } from "@faker-js/faker";
 
 export const operations_store = async (req: Request, res: Response) => {
   const operationsHeader = req.headers[process.env.FL_GQL_OPERATION_HEADER];
   if (operationsHeader !== process.env.FL_GQL_OPERATION_SECRET) {
     return res.status(403).send({
-      message: "You are not authorized to perform queries on this endpoint.",
+      message: "unauthorized",
     });
   }
   const operations = req.body;

@@ -22,7 +22,7 @@ type ItemEdge {
 }
 
 type Mutation {
-  upsertUser: UserType @hasPerm(perm: "write_users", onFailure: "throw")
+  upsertUser: UserType @hasPerm(perm: "WRITE_USERS", onFailure: "throw")
 }
 
 """
@@ -51,6 +51,12 @@ type PageInfo {
   startCursor: String
 }
 
+type PermissionSet {
+  name: String!
+  permissionSetId: ID!
+  roles: [Roles!]
+}
+
 type Query {
   me: UserType
   users(
@@ -58,7 +64,7 @@ type Query {
     after: String
     """Grabs the first n records."""
     first: Float
-  ): UserConnection @hasPerm(perm: "read_users", onFailure: "throw")
+  ): UserConnection @hasPerm(perm: "READ_USERS", onFailure: "throw")
 }
 
 """All available roles"""
@@ -91,6 +97,7 @@ type UserType {
   createdAt: String!
   email: String!
   name: String!
-  roles: [Roles!]
+  permissionSet: PermissionSet
+  permissionSetId: String!
   userId: ID!
 }

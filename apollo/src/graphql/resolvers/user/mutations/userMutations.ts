@@ -1,8 +1,8 @@
 import { Ctx, Directive, Mutation, Resolver } from "type-graphql";
-import { UserType } from "../../types/user/UserType";
-import { Context } from "../../../context";
-import { DIRECTIVES } from "../../directives";
-import { ROLE } from "../../enums/roleEnum";
+import { UserType } from "../../../types/user/UserType";
+import { Context } from "../../../../context";
+import { DIRECTIVES } from "../../../directives";
+import { ROLE } from "../../../enums/roleEnum";
 
 @Resolver()
 export class UserMutations {

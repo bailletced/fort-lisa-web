@@ -15,7 +15,7 @@ model User {
   salt    String?
   isActive Boolean @default(false) @map("is_active")
   lastConnectionDate DateTime? @map("last_connection_date")
-  permissionSetId String? @map("permission_set_id") @unique
+  permissionSetId String? @map("permission_set_id")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime? @updatedAt @map("updated_at")
 
@@ -90,7 +90,7 @@ model PermissionSet {
   updatedAt DateTime? @updatedAt @map("updated_at")
 
   permissionSetRoleSubscriptions PermissionSetRoleSubscription[]
-  user User?
+  user User[]
 
   @@index([permissionSetId])
   @@map("permission_sets")

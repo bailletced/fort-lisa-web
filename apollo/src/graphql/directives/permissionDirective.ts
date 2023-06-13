@@ -37,7 +37,7 @@ export function permissionDirectiveTransformer(schema, directiveName) {
             throw new UnauthenticatedException();
           }
 
-          if (!context.user.roles?.includes(perm)) {
+          if (!context.user.permissionSet?.roles?.includes(perm)) {
             if (onFailure === "throw") {
               throw new RoleMissingException();
             }

@@ -1,19 +1,14 @@
-import { Args, Ctx, Directive, Query, Resolver } from "type-graphql";
-import { UserConnection, UserType } from "../../types/user/UserType";
-import { Context } from "../../../context";
 import { findManyCursorConnection } from "@devoxa/prisma-relay-cursor-connection";
-import prismaClient from "../../../internal/prismaClient";
-import { ForwardPaginationArgs } from "../../paginations/cursor/cursorPagination";
-import { DIRECTIVES } from "../../directives";
-import { ROLE } from "../../enums/roleEnum";
+import { Resolver, Query, Ctx, Directive, Args } from "type-graphql";
+import { Context } from "../../../../context";
+import prismaClient from "../../../../internal/prismaClient";
+import { DIRECTIVES } from "../../../directives";
+import { ROLE } from "../../../enums/roleEnum";
+import { ForwardPaginationArgs } from "../../../paginations/cursor/cursorPagination";
+import { UserConnection } from "../../../types";
 
 @Resolver()
 export class UserQueries {
-  @Query(() => UserType, { nullable: true })
-  me(@Ctx() ctx: Context) {
-    return ctx.user;
-  }
-
   @Directive(
     `@${DIRECTIVES.HAS_PERM}(perm: "${ROLE.READ_USERS}", onFailure: "throw")`
   )
@@ -32,7 +27,11 @@ export class UserQueries {
               }
             : undefined,
         };
-        return prismaClient.user.findMany({ ...args, ...baseArgs });
+        return prismaClient.user.findMany({
+          ...args,
+          ...baseArgs,
+          orderBy: { email: "asc" },
+        });
       },
 
       () => prismaClient.user.count(),

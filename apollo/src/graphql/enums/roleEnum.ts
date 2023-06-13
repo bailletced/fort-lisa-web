@@ -1,8 +1,8 @@
 import { registerEnumType } from "type-graphql";
 
 export enum ROLE {
-  READ_USERS = "read_users",
-  WRITE_USERS = "write_users",
+  READ_USERS = "READ_USERS",
+  WRITE_USERS = "WRITE_USERS",
 }
 
 registerEnumType(ROLE, {
