@@ -15,8 +15,10 @@ export class PermissionSet {
 
   @Field((type) => [ROLE!], { nullable: true })
   async roles(@Ctx() ctx: Context): Promise<ROLE[]> {
-    return await ctx.dataSources.roleLoader.getRolesFromPermissionSet(
-      this.permissionSetId
-    );
+    return (
+      await ctx.dataSources.roleLoader.getRolesFromPermissionSet(
+        this.permissionSetId
+      )
+    )[0];
   }
 }

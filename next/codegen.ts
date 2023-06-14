@@ -7,20 +7,6 @@ const config: CodegenConfig = {
     "./graphql/types.ts": {
       plugins: ["typescript"],
     },
-    "./graphql/client.json": {
-      plugins: ["graphql-codegen-persisted-query-ids"],
-      config: {
-        output: "client",
-        algorithm: "sha256",
-      },
-    },
-    "./graphql/server.json": {
-      plugins: ["graphql-codegen-persisted-query-ids"],
-      config: {
-        output: "server",
-        algorithm: "sha256",
-      },
-    },
   },
 };
 export default config;

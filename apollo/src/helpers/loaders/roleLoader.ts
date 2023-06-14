@@ -1,6 +1,5 @@
 import DataLoader from "dataloader";
 import prismaClient from "../../internal/prismaClient";
-import { Prisma } from "@prisma/client";
 
 export class RoleLoader {
   private roleFromSubscriptions = new DataLoader(async (ids: string[]) => {
@@ -37,10 +36,16 @@ export class RoleLoader {
       `);
 
     const permSetIdToRolesMap = roles.reduce((mapping, role) => {
-      mapping[role.permissionSetId] = role.name;
+      mapping[role.permissionSetId] = [
+        ...(mapping[role.permissionSetId] || []),
+        role.name,
+      ];
       return mapping;
     }, {});
-    return ids.map((id) => permSetIdToRolesMap[id]);
+
+    return ids.map((id) => {
+      return permSetIdToRolesMap[id];
+    });
   });
 
   async getRolesFromSubscription(id: string) {

@@ -1,5 +1,4 @@
 import session from "express-session";
-import { whitelistOperationMiddleware } from "./whitelistOperationsMiddleware";
 import genFunc from "connect-pg-simple";
 import pg from "pg";
 import { COOKIES } from "../../constants/cookies";
@@ -32,6 +31,6 @@ export const middlewares = async () => {
     }),
     passport.initialize(),
     passport.session(),
-    whitelistOperationMiddleware,
+    // whitelistOperationMiddleware,
   ];
 };

@@ -17,15 +17,15 @@ export class UserType {
 
   @Field((type) => String)
   email: string;
-
-  @Field((type) => String)
   permissionSetId: string;
 
   @Field((type) => PermissionSetType, { nullable: true })
   async permissionSet(): Promise<PermissionSet> {
-    return await prismaClient.permissionSet.findUnique({
-      where: { permissionSetId: this?.permissionSetId || undefined },
-    });
+    if (this?.permissionSetId) {
+      return await prismaClient.permissionSet.findUnique({
+        where: { permissionSetId: this.permissionSetId },
+      });
+    }
   }
 
   @Field((type) => String)

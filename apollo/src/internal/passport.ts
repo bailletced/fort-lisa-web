@@ -31,7 +31,7 @@ passport.use(
           },
         });
         if (newUser) {
-          done(null, { ...newUser, roles: [] });
+          done(null, newUser);
         }
       } else {
         done(null, user);

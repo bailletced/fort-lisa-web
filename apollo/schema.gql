@@ -22,7 +22,7 @@ type ItemEdge {
 }
 
 type Mutation {
-  upsertUser: UserType @hasPerm(perm: "WRITE_USERS", onFailure: "throw")
+  upsertUser(email: String!, name: String!, password: String, permissionSetId: String, salt: String): UserType @hasPerm(perm: "WRITE_USERS", onFailure: "throw")
 }
 
 """
@@ -98,6 +98,5 @@ type UserType {
   email: String!
   name: String!
   permissionSet: PermissionSet
-  permissionSetId: String!
   userId: ID!
 }

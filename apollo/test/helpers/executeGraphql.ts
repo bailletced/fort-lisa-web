@@ -1,11 +1,16 @@
 import { ApolloServer } from "@apollo/server";
 import { getSchema } from "../../src/schema";
-import { Context, ContextUser, contextDataSources } from "../../src/context";
+import {
+  Context,
+  ContextUser,
+  contextDataSources,
+  contextModels,
+} from "../../src/context";
 import { permissionDirectiveTransformer } from "../../src/graphql/directives/permissionDirective";
 import { DIRECTIVES } from "../../src/graphql/directives";
 
 export const executeGqlSchema = async (
-  query: string,
+  operation: string,
   user?: ContextUser,
   variables?: any
 ) => {
@@ -20,12 +25,13 @@ export const executeGqlSchema = async (
   });
 
   return (await apolloServer).executeOperation(
-    { query, variables },
+    { query: operation, variables },
     {
       contextValue: {
         req: null,
         user: user,
         dataSources: contextDataSources,
+        models: contextModels,
       },
     }
   );

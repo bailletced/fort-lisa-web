@@ -1,15 +1,16 @@
 import { User } from "@prisma/client";
 import { Request } from "express";
-import { getUserRoles } from "./models/userModel";
 import { ROLE } from "./graphql/enums/roleEnum";
 import { RoleLoader } from "./helpers/loaders/roleLoader";
 import { PermissionSetLoader } from "./helpers/loaders/permissionSetLoader";
 import prismaClient from "./internal/prismaClient";
+import { UserModel } from "./models/userModel";
 
 export type Context = {
   req: Request;
   user?: ContextUser;
-  dataSources: TContextDataSource;
+  dataSources: TContextDataSources;
+  models: TContextModels;
 };
 
 export type ContextUser = Omit<User, "permissionSetId"> & {
@@ -20,21 +21,29 @@ export type ContextUser = Omit<User, "permissionSetId"> & {
   };
 };
 
-type TContextDataSource = {
+type TContextDataSources = {
   roleLoader: RoleLoader;
   permissionSetLoader: PermissionSetLoader;
 };
 
-export const contextDataSources = {
+type TContextModels = {
+  userModel: UserModel;
+};
+
+export const contextDataSources: TContextDataSources = {
   roleLoader: new RoleLoader(),
   permissionSetLoader: new PermissionSetLoader(),
 };
 
+export const contextModels: TContextModels = {
+  userModel: new UserModel(),
+};
+
 export async function getContextUser(user: User): Promise<ContextUser> {
-  const userRoles = await getUserRoles(user);
+  const userRoles = await new UserModel().getUserRoles(user);
   const permissionSet = await prismaClient.permissionSet.findFirst({
     where: {
-      permissionSetId: user.permissionSetId,
+      permissionSetId: user.permissionSetId || undefined,
     },
   });
   return {
@@ -53,5 +62,6 @@ export const getContext = (req: Request): Context => {
     req,
     user,
     dataSources: contextDataSources,
+    models: contextModels,
   };
 };

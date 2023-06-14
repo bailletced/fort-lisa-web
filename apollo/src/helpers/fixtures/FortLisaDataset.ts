@@ -1,8 +1,12 @@
 import { faker } from "@faker-js/faker";
 import { ROLE } from "../../graphql/enums/roleEnum";
 import prismaClient from "../../internal/prismaClient";
+import { UserType } from "../../graphql/types";
 
-export async function createUser(email?: string, roles: ROLE[] = []) {
+export async function createUser(
+  userData: Partial<UserType>,
+  roles: ROLE[] = []
+) {
   let permissionSetId = undefined;
   if (roles.length > 0) {
     const insertedRoles = await prismaClient.$transaction(
@@ -27,7 +31,8 @@ export async function createUser(email?: string, roles: ROLE[] = []) {
 
   return prismaClient.user.create({
     data: {
-      email: email ?? faker.internet.email(),
+      email: userData?.email ?? faker.internet.email(),
+      name: userData?.name ?? faker.internet.email(),
       permissionSetId,
     },
   });

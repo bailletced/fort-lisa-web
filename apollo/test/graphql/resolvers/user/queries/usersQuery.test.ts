@@ -60,8 +60,8 @@ describe("users query", () => {
   });
 
   it("should return paginated data", async () => {
-    const user = await createUser("aa@aa.com", [ROLE.READ_USERS]);
-    const user2 = await createUser("bb@bb.com", [ROLE.WRITE_USERS]);
+    const user = await createUser({ email: "aa@aa.com" }, [ROLE.READ_USERS]);
+    const user2 = await createUser({ email: "bb@bb.com" }, [ROLE.WRITE_USERS]);
 
     const response = await executeGqlSchema(query, await getContextUser(user), {
       after: null,
