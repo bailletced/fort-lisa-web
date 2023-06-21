@@ -1,7 +1,5 @@
 import { ContextUser } from "../src/context";
 
-export const thisIsAModule = true;
-
 declare global {
   namespace NodeJS {
     interface ProcessEnv {

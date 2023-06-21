@@ -10,16 +10,15 @@
     "graphql:generate": "graphql-codegen"
   },
   "dependencies": {
-    "@apollo/client": "^3.7.15",
-    "@graphql-yoga/plugin-persisted-operations": "^1.9.1",
-    "@types/node": "18.16.1",
-    "@types/react": "18.2.0",
-    "@types/react-dom": "18.2.1",
+    "@apollo/client": "^3.8.0-beta.3",
+    "@apollo/experimental-nextjs-app-support": "^0.2.1",
+    "@nextui-org/react": "^0.0.0-dev-v2-20230620231624",
     "autoprefixer": "10.4.14",
     "eslint": "8.39.0",
     "eslint-config-next": "13.3.1",
+    "framer-motion": "^10.12.16",
     "graphql": "^16.6.0",
-    "next": "13.3.1",
+    "next": "13.4",
     "postcss": "8.4.23",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -31,6 +30,9 @@
     "@graphql-codegen/client-preset": "^3.0.1",
     "@graphql-codegen/introspection": "^3.0.1",
     "@graphql-codegen/typescript": "^3.0.4",
+    "@types/node": "^20.3.1",
+    "@types/react": "^18.2.13",
+    "@types/react-dom": "^18.2.6",
     "graphql-codegen-persisted-query-ids": "^0.1.2"
   }
 }

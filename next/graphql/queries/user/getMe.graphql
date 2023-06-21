@@ -2,7 +2,6 @@ query getMe {
   me {
     userId
     email
-    isAdmin
     name
   }
 }

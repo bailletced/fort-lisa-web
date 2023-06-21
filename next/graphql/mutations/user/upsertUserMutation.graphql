@@ -1,8 +1,0 @@
-mutation upsertUserMutation {
-  me {
-    userId
-    email
-    isAdmin
-    name
-  }
-}
